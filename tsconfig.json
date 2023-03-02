@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+      "rootDir": ".",
+      "outDir": "build",
+      "target": "ESNext",
+      "lib": [
+        "es2020",
+        "DOM",
+        
+      ],
+      "module": "esnext",
+      "strict": true,
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "declaration": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "strictPropertyInitialization": false,
+      "noImplicitAny": false,
+      "esModuleInterop": true,
+      "skipLibCheck": true
+    },
+    "exclude": [
+      "bin/*",
+      "setup.ts",
+      "dist/*",
+      "*.d.ts",
+      "build"
+    ]
+  }
