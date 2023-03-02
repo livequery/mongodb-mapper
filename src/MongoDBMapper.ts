@@ -47,7 +47,8 @@ export const MongodbRealtimeMapperProvider = (options) => {
                     .on('error', console.error)
                     .on('change', (change: any) => {
                         const schema_refs = collections_schema_refs.get(change.ns.coll)?.schema_refs || [];
-                        const fullDocument = (change.fullDocument || change.fullDocumentBeforeChange);
+                        const f = (change.fullDocument || change.fullDocumentBeforeChange);
+                        const fullDocument = { ...f, id: f._id }
                         if (!fullDocument.id)
                             return;
                         for (const schema_ref of schema_refs) {
