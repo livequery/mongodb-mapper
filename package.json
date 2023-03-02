@@ -1,6 +1,7 @@
 {
   "name": "@livequery/mongodb-mapper",
-  "version": "1.0.5",
+  "type": "module",
+  "version": "1.0.6",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -13,6 +14,7 @@
     "@livequery/nestjs": "^1.0.46",
     "@livequery/typeorm": "^1.0.51",
     "mongo": "^0.1.0",
+    "mongodb": "^5.1.0",
     "typeorm": "^0.3.12",
     "typescript": "^4.9.5"
   }

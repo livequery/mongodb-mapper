@@ -1,7 +1,7 @@
 
 import { LivequeryWebsocketSync } from '@livequery/nestjs'
 import { getEntityName, getMetadatas } from '@livequery/typeorm'
-import { MongoClient } from 'mongo'
+import { MongoClient } from 'mongodb'
 
 export const MongodbRealtimeMapperProvider = (options) => {
     return {
@@ -35,19 +35,17 @@ export const MongodbRealtimeMapperProvider = (options) => {
                 if (collections_schema_refs.size == 0) continue
 
                 const connection = await MongoClient.connect(url);
-
                 const db = await connection.db(database);
                 for (const [collection_name] of collections_schema_refs) {
-                    db.command({ collMod: collection_name, recordPreImages: true });
+                    await db.command({ collMod: collection_name, recordPreImages: true });
                 }
-                const pipeline = [];
-
-
-
                 db
-                    .watch(pipeline, { fullDocument: 'updateLookup', fullDocumentBeforeChange: 'whenAvailable' })
+                    .watch([], {
+                        fullDocument: 'updateLookup',
+                        fullDocumentBeforeChange: 'whenAvailable'
+                    })
                     .on('error', console.error)
-                    .on('change', (change) => {
+                    .on('change', (change: any) => {
                         const schema_refs = collections_schema_refs.get(change.ns.coll)?.schema_refs || [];
                         const fullDocument = (change.fullDocument || change.fullDocumentBeforeChange);
                         if (!fullDocument.id)
@@ -66,7 +64,7 @@ export const MongodbRealtimeMapperProvider = (options) => {
                             });
                             change.operationType == 'delete' && ws.changes.next({ data: { id: fullDocument.id }, ref, type: 'removed' });
                         }
-                    });
+                    })
             }
         }
     };

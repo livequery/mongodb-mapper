@@ -1,6 +1,6 @@
 import { LivequeryWebsocketSync } from '@livequery/nestjs';
 import { getEntityName, getMetadatas } from '@livequery/typeorm';
-import { MongoClient } from 'mongo';
+import { MongoClient } from 'mongodb';
 export const MongodbRealtimeMapperProvider = (options) => {
     return {
         provide: Symbol.for('MongodbRealtimeProviderWithMultipleConnections'),
@@ -35,11 +35,13 @@ export const MongodbRealtimeMapperProvider = (options) => {
                 const connection = await MongoClient.connect(url);
                 const db = await connection.db(database);
                 for (const [collection_name] of collections_schema_refs) {
-                    db.command({ collMod: collection_name, recordPreImages: true });
+                    await db.command({ collMod: collection_name, recordPreImages: true });
                 }
-                const pipeline = [];
                 db
-                    .watch(pipeline, { fullDocument: 'updateLookup', fullDocumentBeforeChange: 'whenAvailable' })
+                    .watch([], {
+                    fullDocument: 'updateLookup',
+                    fullDocumentBeforeChange: 'whenAvailable'
+                })
                     .on('error', console.error)
                     .on('change', (change) => {
                     const schema_refs = collections_schema_refs.get(change.ns.coll)?.schema_refs || [];
