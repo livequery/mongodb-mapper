@@ -58,27 +58,29 @@ export const MongodbRealtimeMapperProvider = (options) => {
                             change.operationType == 'insert' && ws.changes.next({ data: fullDocument, ref, type: 'added' });
 
                             if (change.operationType == 'update') {
-                                const keys = refs.filter((key, index) => index % 2 == 0)
 
-                                // In case update make remove data
-                                if (keys.some(key => change.updateDescription.updatedFields[key] == null)) {
-                                    ws.changes.next({ data: { id: fullDocument.id }, ref, type: 'removed' })
-                                    return
+                                const old_ref = refs.map((el, i) => i % 2 == 0 ? el : change.fullDocumentBeforeChange?.[el]).join('/');
+
+                                if (old_ref == ref) {
+                                    ws.changes.next({
+                                        data: {
+                                            ...change.updateDescription.updatedFields,
+                                            id: fullDocument.id
+                                        },
+                                        ref,
+                                        type: 'modified'
+                                    })
+                                } else {
+                                    ws.changes.next({ data: { id: fullDocument.id }, ref: old_ref, type: 'removed' });
+                                    ws.changes.next({
+                                        data: {
+                                            ...fullDocument,
+                                            id: fullDocument.id
+                                        },
+                                        ref,
+                                        type: 'added'
+                                    });
                                 }
-
-                                // If null in ref do nothing
-                                if (keys.some(key => fullDocument[key] == null)) return
-
-                                // Broadcast change
-                                const updated_make_new_ref = keys.every(key => change.fullDocumentBeforeChange[key] == null)
-                                ws.changes.next({
-                                    data: {
-                                        ...updated_make_new_ref ? fullDocument : change.updateDescription.updatedFields,
-                                        id: fullDocument.id
-                                    },
-                                    ref,
-                                    type: 'insert'
-                                })
                             }
 
                             change.operationType == 'delete' && ws.changes.next({ data: { id: fullDocument.id }, ref, type: 'removed' });
