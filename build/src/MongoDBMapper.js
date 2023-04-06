@@ -50,18 +50,32 @@ export const MongodbRealtimeMapperProvider = (options) => {
                     if (!fullDocument.id)
                         return;
                     for (const schema_ref of schema_refs) {
-                        const ref = schema_ref.split('/').map((el, i) => i % 2 == 0 ? el : fullDocument?.[el]).join('/');
+                        const refs = schema_ref.split('/');
+                        const ref = refs.map((el, i) => i % 2 == 0 ? el : fullDocument?.[el]).join('/');
                         if (ref.includes('//'))
                             continue;
                         change.operationType == 'insert' && ws.changes.next({ data: fullDocument, ref, type: 'added' });
-                        change.operationType == 'update' && ws.changes.next({
-                            data: {
-                                ...change.updateDescription.updatedFields,
-                                id: fullDocument.id
-                            },
-                            ref,
-                            type: 'modified'
-                        });
+                        if (change.operationType == 'update') {
+                            const keys = refs.filter((key, index) => index % 2 == 0);
+                            // In case update make remove data
+                            if (keys.some(key => change.updateDescription.updatedFields[key] == null)) {
+                                ws.changes.next({ data: { id: fullDocument.id }, ref, type: 'removed' });
+                                return;
+                            }
+                            // If null in ref do nothing
+                            if (keys.some(key => fullDocument[key] == null))
+                                return;
+                            // Broadcast change
+                            const updated_make_new_ref = keys.every(key => change.fullDocumentBeforeChange[key] == null);
+                            ws.changes.next({
+                                data: {
+                                    ...updated_make_new_ref ? fullDocument : change.updateDescription.updatedFields,
+                                    id: fullDocument.id
+                                },
+                                ref,
+                                type: 'insert'
+                            });
+                        }
                         change.operationType == 'delete' && ws.changes.next({ data: { id: fullDocument.id }, ref, type: 'removed' });
                     }
                 });
