@@ -1,20 +1,37 @@
 {
   "name": "@livequery/mongodb-mapper",
+  "version": "1.0.77",
   "type": "module",
-  "version": "1.0.11",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "author": "Duong Van Ba",
+  "description": "MongoDB realtime mapper for @livequery ecosystem",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "build/**/*"
   ],
-  "scripts": {
-    "build": "tsc -b tsconfig.json"
+  "repository": {
+    "url": "https://github.com/livequery/mongodb-mapper.git"
   },
-  "dependencies": {
-    "@livequery/nestjs": "^1.0.46",
-    "@livequery/typeorm": "^1.0.51",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./build/src/index.d.ts",
+        "default": "./build/src/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "clear; node --no-warnings --es-module-specifier-resolution=node --experimental-specifier-resolution=node --loader ts-node/esm ",
+    "build": "tsc -v; rm -rf build && tsc -b tsconfig.json"
+  },
+  "devDependencies": {
+    "@livequery/types": "1.0.77",
     "mongodb": "^4.0.0",
     "typeorm": "^0.3.12",
     "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1",
+    "ts-node": "^10.9.1"
   }
 }
