@@ -1,1 +1,1 @@
-export { ConnectionOptions, DatabaseEvent, LogData, listenMongoDBDataChange } from './MongoDBRealtime.js'
+export { ConnectionOptions, listenMongoDBDataChange } from './MongoDBRealtime.js'

@@ -1,6 +1,6 @@
 {
   "name": "@livequery/mongodb-mapper",
-  "version": "1.0.77",
+  "version": "1.0.79",
   "type": "module",
   "author": "Duong Van Ba",
   "description": "MongoDB realtime mapper for @livequery ecosystem",
@@ -25,12 +25,10 @@
     "build": "tsc -v; rm -rf build && tsc -b tsconfig.json"
   },
   "devDependencies": {
-    "@livequery/types": "1.0.77",
+    "@livequery/types": "1.0.79",
     "mongodb": "^4.0.0",
     "typeorm": "^0.3.12",
-    "typescript": "^4.9.5"
-  },
-  "dependencies": {
+    "typescript": "^4.9.5",
     "rxjs": "^7.8.1",
     "ts-node": "^10.9.1"
   }
