@@ -16,7 +16,7 @@ export const listenMongoDBDataChange = <T extends LivequeryBaseEntity = Livequer
             const db = await connection.db(database);
             const collections = await lastValueFrom(from(db.listCollections()).pipe(toArray()))
             for (const { name: collMod } of collections) {
-                await db.command({ collMod, recordPreImages: true });
+                await db.command({ collMod, changeStreamPreAndPostImages: { enabled: true } })
             }
 
             db
