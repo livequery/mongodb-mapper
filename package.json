@@ -1,6 +1,6 @@
 {
   "name": "@livequery/mongodb-mapper",
-  "version": "1.0.82",
+  "version": "1.0.83",
   "type": "module",
   "author": "Duong Van Ba",
   "description": "MongoDB realtime mapper for @livequery ecosystem",
