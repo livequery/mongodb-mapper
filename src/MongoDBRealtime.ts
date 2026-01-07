@@ -57,7 +57,7 @@ export class MongodbRealtime implements LivequeryDatasourceWatcher {
             }, {})
         }
     }
- 
+
 
     #listenRawChanges<T extends LivequeryBaseEntity = LivequeryBaseEntity>({ url, sources = {} }: ConnectionOptions) {
 
@@ -198,10 +198,10 @@ export class MongodbRealtime implements LivequeryDatasourceWatcher {
             }
         }, {} as { [db: string]: Set<string> })
         const paths = realtime_routes.reduce((p, c) => {
-            const map = p.get(c.path) || new Map<string, RefMetadata[]>()
-            const refs = c.path.split('/')
-            const ref = refs.join('/')
             const collection_name = c.options.schema.options.collection as string
+            const map = p.get(collection_name) || new Map<string, RefMetadata[]>()
+            const refs = c.path.split('/')
+            const ref = refs.slice(0, refs.length % 2 == 1 ? -1 : undefined).join('/')
             map.set(ref, refs.map((collection, index) => {
                 if (index % 2 == 1) return []
                 const ref = refs[index + 1]
