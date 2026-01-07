@@ -201,7 +201,7 @@ export class MongodbRealtime implements LivequeryDatasourceWatcher {
             const collection_name = c.options.schema.options.collection as string
             const map = p.get(collection_name) || new Map<string, RefMetadata[]>()
             const refs = c.path.split('/')
-            const ref = refs.slice(0, refs.length % 2 == 1 ? -1 : undefined).join('/')
+            const ref = refs.slice(0, refs.length % 2 == 0 ? -1 : undefined).join('/')
             map.set(ref, refs.map((collection, index) => {
                 if (index % 2 == 1) return []
                 const ref = refs[index + 1]
